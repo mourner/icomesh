@@ -33,10 +33,10 @@ export default function icomesh(order = 4) {
     }
 
     let trianglesPrev = triangles;
+    const IndexArray = order > 5 ? Uint32Array : Uint16Array;
 
     for (let i = 0, v = 12; i < order; i++) { // repeatedly subdivide each triangle into 4 triangles
         const prevLen = trianglesPrev.length;
-        const IndexArray = prevLen * 4 > 65535 ? Uint32Array : Uint16Array;
         triangles = new IndexArray(prevLen * 4);
 
         for (let k = 0; k < prevLen; k += 3) {
