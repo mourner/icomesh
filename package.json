@@ -23,6 +23,9 @@
     "webgl",
     "mesh"
   ],
+  "files": [
+    "index.js"
+  ],
   "author": "Vladimir Agafonkin",
   "license": "ISC"
 }
