@@ -1,3 +1,5 @@
+const midCache = new Map(); // midpoint vertices cache to avoid duplicating shared vertices
+
 export default function icomesh(order = 4) {
     if (order > 10) throw new Error(`Max order is 10, but given ${order}.`);
 
@@ -19,22 +21,20 @@ export default function icomesh(order = 4) {
         9, 8, 1, 4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7
     ]);
 
-    let v = 12;
-    const midCache = order ? new Map() : null; // midpoint vertices cache to avoid duplicating shared vertices
-
-    function addMidPoint(a, b) {
+    function addMidPoint(a, b, v) {
         const key = ((a + b) * (a + b + 1) / 2) + Math.min(a, b) | 0; // Cantor's pairing function
         let i = midCache.get(key);
         if (i !== undefined) return i;
         midCache.set(key, v);
-        for (let k = 0; k < 3; k++) vertices[3 * v + k] = (vertices[3 * a + k] + vertices[3 * b + k]) * 0.5;
-        i = v++;
-        return i;
+        vertices[3 * v + 0] = (vertices[3 * a + 0] + vertices[3 * b + 0]) * 0.5;
+        vertices[3 * v + 1] = (vertices[3 * a + 1] + vertices[3 * b + 1]) * 0.5;
+        vertices[3 * v + 2] = (vertices[3 * a + 2] + vertices[3 * b + 2]) * 0.5;
+        return v;
     }
 
     let trianglesPrev = triangles;
 
-    for (let i = 0; i < order; i++) { // repeatedly subdivide each triangle into 4 triangles
+    for (let i = 0, v = 12; i < order; i++) { // repeatedly subdivide each triangle into 4 triangles
         const prevLen = trianglesPrev.length;
         const IndexArray = prevLen * 4 > 65535 ? Uint32Array : Uint16Array;
         triangles = new IndexArray(prevLen * 4);
@@ -43,9 +43,9 @@ export default function icomesh(order = 4) {
             const v1 = trianglesPrev[k + 0];
             const v2 = trianglesPrev[k + 1];
             const v3 = trianglesPrev[k + 2];
-            const a = addMidPoint(v1, v2);
-            const b = addMidPoint(v2, v3);
-            const c = addMidPoint(v3, v1);
+            const a = addMidPoint(v1, v2, v++);
+            const b = addMidPoint(v2, v3, v++);
+            const c = addMidPoint(v3, v1, v++);
             let t = k * 4;
             triangles[t++] = v1; triangles[t++] = a; triangles[t++] = c;
             triangles[t++] = v2; triangles[t++] = b; triangles[t++] = a;
