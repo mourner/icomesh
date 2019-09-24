@@ -26,7 +26,10 @@ export default function icomesh(order = 4) {
     function addMidPoint(a, b) {
         const key = Math.floor((a + b) * (a + b + 1) / 2) + (a < b ? a : b); // Cantor's pairing function
         let i = midCache.get(key);
-        if (i !== undefined) return i;
+        if (i !== undefined) {
+            midCache.delete(key); // midpoint is only reused once, so we delete it for performance
+            return i;
+        }
         midCache.set(key, v);
         for (let k = 0; k < 3; k++) vertices[3 * v + k] = (vertices[3 * a + k] + vertices[3 * b + k]) / 2;
         i = v++;
