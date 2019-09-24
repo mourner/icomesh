@@ -21,10 +21,13 @@ export default function icomesh(order = 4) {
     ]);
 
     let v = 12;
+    let keyOffset = 1 << 26;
     const midCache = order && new Map(); // midpoint vertices cache to avoid duplicating shared vertices
 
     function addMidPoint(a, b) {
-        const key = Math.min(a, b) * Math.pow(2, 26) + Math.max(a, b);
+        const key = a < b ?
+              a * keyOffset + b :
+              b * keyOffset + a;
         let i = midCache.get(key);
         if (i !== undefined) return i;
         midCache.set(key, v);
