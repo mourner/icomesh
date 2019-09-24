@@ -6,7 +6,7 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "test": "eslint *.js",
+    "test": "eslint *.mjs",
     "bench": "node --experimental-modules bench.mjs"
   },
   "devDependencies": {
