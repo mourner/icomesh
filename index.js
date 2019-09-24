@@ -24,7 +24,8 @@ export default function icomesh(order = 4) {
     const midCache = order && new Map(); // midpoint vertices cache to avoid duplicating shared vertices
 
     function addMidPoint(a, b) {
-        const key = Math.floor((a + b) * (a + b + 1) / 2) + (a < b ? a : b); // Cantor's pairing function
+        const key = Math.min(a, b) * Math.pow(2, 26) + Math.max(a, b);
+
         let i = midCache.get(key);
         if (i !== undefined) return i;
         midCache.set(key, v);
