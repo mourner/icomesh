@@ -58,10 +58,10 @@ export default function icomesh(order = 4) {
     // normalize vertices
     for (let i = 0, len = vertices.length; i < len; i += 3) {
         // const m = 1 / Math.hypot(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
-        const v0 = vertices[i + 0];
-        const v1 = vertices[i + 1];
-        const v2 = vertices[i + 2];
-        const d = v0 * v0 + v1 * v1 + v2 * v2;
+        const v1 = vertices[i + 0];
+        const v2 = vertices[i + 1];
+        const v3 = vertices[i + 2];
+        const d = v1 * v1 + v2 * v2 + v3 * v3;
         if (d < 1e-6) continue;
         const m  = 1 / Math.sqrt(d);
         vertices[i + 0] *= m;
