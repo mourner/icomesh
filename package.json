@@ -1,0 +1,28 @@
+{
+  "name": "icomesh",
+  "description": "Fast icosphere mesh generation",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "module": "index.js",
+  "scripts": {
+    "test": "eslint *.js"
+  },
+  "devDependencies": {
+    "eslint": "^6.4.0",
+    "eslint-config-mourner": "^3.0.0",
+    "esm": "^3.2.25"
+  },
+  "eslintConfig": {
+    "extends": "mourner"
+  },
+  "keywords": [
+    "icosphere",
+    "sphere",
+    "geodesic polyhedron",
+    "webgl",
+    "mesh"
+  ],
+  "author": "Vladimir Agafonkin",
+  "license": "ISC"
+}
