@@ -1,4 +1,3 @@
-
 export default function icomesh(order = 4) {
     if (order > 10) throw new Error(`Max order is 10, but given ${order}.`);
 
@@ -7,40 +6,42 @@ export default function icomesh(order = 4) {
     const T = Math.pow(4, order);
 
     const vertices = new Float32Array((10 * T + 2) * 3);
-    vertices.set([
+    vertices.set(Float32Array.of(
         -1, f, 0, 1, f, 0, -1, -f, 0, 1, -f, 0,
         0, -1, f, 0, 1, f, 0, -1, -f, 0, 1, -f,
         f, 0, -1, f, 0, 1, -f, 0, -1, -f, 0, 1
-    ]);
+    ));
 
-    let triangles = new Uint16Array([
+    let triangles = Uint16Array.of(
         0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11,
         11, 10, 2, 5, 11, 4, 1, 5, 9, 7, 1, 8, 10, 7, 6,
         3, 9, 4, 3, 4, 2, 3, 2, 6, 3, 6, 8, 3, 8, 9,
         9, 8, 1, 4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7
-    ]);
+    );
 
     let v = 12;
-    const midCache = order && new Map(); // midpoint vertices cache to avoid duplicating shared vertices
+    const midCache = order ? new Map() : null; // midpoint vertices cache to avoid duplicating shared vertices
 
     function addMidPoint(a, b) {
-        const key = Math.floor((a + b) * (a + b + 1) / 2) + (a < b ? a : b); // Cantor's pairing function
+        const key = Math.floor(((a + b) * (a + b + 1) / 2) + Math.min(a, b)); // Cantor's pairing function
         let i = midCache.get(key);
         if (i !== undefined) {
             midCache.delete(key); // midpoint is only reused once, so we delete it for performance
             return i;
         }
         midCache.set(key, v);
-        for (let k = 0; k < 3; k++) vertices[3 * v + k] = (vertices[3 * a + k] + vertices[3 * b + k]) / 2;
+        vertices[3 * v + 0] = (vertices[3 * a + 0] + vertices[3 * b + 0]) * 0.5;
+        vertices[3 * v + 1] = (vertices[3 * a + 1] + vertices[3 * b + 1]) * 0.5;
+        vertices[3 * v + 2] = (vertices[3 * a + 2] + vertices[3 * b + 2]) * 0.5;
         i = v++;
         return i;
     }
 
     let trianglesPrev = triangles;
+    const IndexArray = order > 5 ? Uint32Array : Uint16Array;
 
     for (let i = 0; i < order; i++) { // repeatedly subdivide each triangle into 4 triangles
         const prevLen = trianglesPrev.length;
-        const IndexArray = prevLen * 4 > 65535 ? Uint32Array : Uint16Array;
         triangles = new IndexArray(prevLen * 4);
 
         for (let k = 0; k < prevLen; k += 3) {
@@ -60,8 +61,11 @@ export default function icomesh(order = 4) {
     }
 
     // normalize vertices
-    for (let i = 0; i < vertices.length; i += 3) {
-        const m = 1 / Math.hypot(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
+    for (let i = 0, len = vertices.length; i < len; i += 3) {
+        const v1 = vertices[i + 0];
+        const v2 = vertices[i + 1];
+        const v3 = vertices[i + 2];
+        const m  = 1 / Math.sqrt(v1 * v1 + v2 * v2 + v3 * v3);
         vertices[i + 0] *= m;
         vertices[i + 1] *= m;
         vertices[i + 2] *= m;
