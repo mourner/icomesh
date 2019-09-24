@@ -6,8 +6,8 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "test": "eslint *.mjs",
-    "bench": "node --experimental-modules bench.mjs"
+    "test": "eslint *.js",
+    "bench": "node -r esm bench.js"
   },
   "devDependencies": {
     "eslint": "^6.4.0",

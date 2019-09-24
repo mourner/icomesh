@@ -1,11 +1,9 @@
-const midCache = new Map(); // midpoint vertices cache to avoid duplicating shared vertices
-
 export default function icomesh(order = 4) {
     if (order > 10) throw new Error(`Max order is 10, but given ${order}.`);
 
     // set up an icosahedron (12 vertices / 20 triangles)
     const f = (1 + Math.sqrt(5)) / 2;
-    const T = 1 << (order << 1); // Math.pow(4, order);
+    const T = Math.pow(4, order);
 
     const vertices = new Float32Array((10 * T + 2) * 3);
     vertices.set([
@@ -21,21 +19,25 @@ export default function icomesh(order = 4) {
         9, 8, 1, 4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7
     );
 
-    function addMidPoint(a, b, v) {
-        const key = ((a + b) * (a + b + 1) / 2) + Math.min(a, b) | 0; // Cantor's pairing function
+    let v = 12;
+    const midCache = order ? new Map() : null; // midpoint vertices cache to avoid duplicating shared vertices
+
+    function addMidPoint(a, b) {
+        const key = (((a + b) * (a + b + 1) / 2) + Math.min(a, b)).toString(); // Cantor's pairing function
         let i = midCache.get(key);
         if (i !== undefined) return i;
         midCache.set(key, v);
         vertices[3 * v + 0] = (vertices[3 * a + 0] + vertices[3 * b + 0]) * 0.5;
         vertices[3 * v + 1] = (vertices[3 * a + 1] + vertices[3 * b + 1]) * 0.5;
         vertices[3 * v + 2] = (vertices[3 * a + 2] + vertices[3 * b + 2]) * 0.5;
-        return v;
+        i = v++;
+        return i;
     }
 
     let trianglesPrev = triangles;
     const IndexArray = order > 5 ? Uint32Array : Uint16Array;
 
-    for (let i = 0, v = 12; i < order; i++) { // repeatedly subdivide each triangle into 4 triangles
+    for (let i = 0; i < order; i++) { // repeatedly subdivide each triangle into 4 triangles
         const prevLen = trianglesPrev.length;
         triangles = new IndexArray(prevLen * 4);
 
@@ -43,9 +45,9 @@ export default function icomesh(order = 4) {
             const v1 = trianglesPrev[k + 0];
             const v2 = trianglesPrev[k + 1];
             const v3 = trianglesPrev[k + 2];
-            const a = addMidPoint(v1, v2, v++);
-            const b = addMidPoint(v2, v3, v++);
-            const c = addMidPoint(v3, v1, v++);
+            const a = addMidPoint(v1, v2);
+            const b = addMidPoint(v2, v3);
+            const c = addMidPoint(v3, v1);
             let t = k * 4;
             triangles[t++] = v1; triangles[t++] = a; triangles[t++] = c;
             triangles[t++] = v2; triangles[t++] = b; triangles[t++] = a;
@@ -57,13 +59,10 @@ export default function icomesh(order = 4) {
 
     // normalize vertices
     for (let i = 0, len = vertices.length; i < len; i += 3) {
-        // const m = 1 / Math.hypot(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
         const v1 = vertices[i + 0];
         const v2 = vertices[i + 1];
         const v3 = vertices[i + 2];
-        const d = v1 * v1 + v2 * v2 + v3 * v3;
-        if (d < 1e-6) continue;
-        const m  = 1 / Math.sqrt(d);
+        const m  = 1 / Math.sqrt(v1 * v1 + v2 * v2 + v3 * v3);
         vertices[i + 0] *= m;
         vertices[i + 1] *= m;
         vertices[i + 2] *= m;
