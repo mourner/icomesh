@@ -6,11 +6,11 @@ export default function icomesh(order = 4) {
     const T = Math.pow(4, order);
 
     const vertices = new Float32Array((10 * T + 2) * 3);
-    vertices.set([
+    vertices.set(Float32Array.of(
         -1, f, 0, 1, f, 0, -1, -f, 0, 1, -f, 0,
         0, -1, f, 0, 1, f, 0, -1, -f, 0, 1, -f,
         f, 0, -1, f, 0, 1, -f, 0, -1, -f, 0, 1
-    ]);
+    ));
 
     let triangles = Uint16Array.of(
         0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11,
@@ -23,7 +23,7 @@ export default function icomesh(order = 4) {
     const midCache = order ? new Map() : null; // midpoint vertices cache to avoid duplicating shared vertices
 
     function addMidPoint(a, b) {
-        const key = (((a + b) * (a + b + 1) / 2) + Math.min(a, b)).toString(); // Cantor's pairing function
+        const key = Math.floor(((a + b) * (a + b + 1) / 2) + Math.min(a, b)).toString(); // Cantor's pairing function
         let i = midCache.get(key);
         if (i !== undefined) return i;
         midCache.set(key, v);
