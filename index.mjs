@@ -14,12 +14,12 @@ export default function icomesh(order = 4) {
         f, 0, -1, f, 0, 1, -f, 0, -1, -f, 0, 1
     ]);
 
-    let triangles = new Uint16Array([
+    let triangles = Uint16Array.of(
         0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11,
         11, 10, 2, 5, 11, 4, 1, 5, 9, 7, 1, 8, 10, 7, 6,
         3, 9, 4, 3, 4, 2, 3, 2, 6, 3, 6, 8, 3, 8, 9,
         9, 8, 1, 4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7
-    ]);
+    );
 
     function addMidPoint(a, b, v) {
         const key = ((a + b) * (a + b + 1) / 2) + Math.min(a, b) | 0; // Cantor's pairing function
@@ -57,7 +57,13 @@ export default function icomesh(order = 4) {
 
     // normalize vertices
     for (let i = 0, len = vertices.length; i < len; i += 3) {
-        const m = 1 / Math.hypot(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
+        // const m = 1 / Math.hypot(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
+        const v0 = vertices[i + 0];
+        const v1 = vertices[i + 1];
+        const v2 = vertices[i + 2];
+        const d = v0 * v0 + v1 * v1 + v2 * v2;
+        if (d < 1e-6) continue;
+        const m  = 1 / Math.sqrt(d);
         vertices[i + 0] *= m;
         vertices[i + 1] *= m;
         vertices[i + 2] *= m;
