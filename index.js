@@ -25,7 +25,6 @@ export default function icomesh(order = 4) {
 
     function addMidPoint(a, b) {
         const key = Math.min(a, b) * Math.pow(2, 26) + Math.max(a, b);
-
         let i = midCache.get(key);
         if (i !== undefined) return i;
         midCache.set(key, v);
