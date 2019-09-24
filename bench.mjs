@@ -1,8 +1,8 @@
 
-import icomesh from './index.js';
+import icomesh from './index.mjs';
 import {performance} from 'perf_hooks';
 
-for (let i = 0; i <= 10; i++) {
+for (let i = 0; i <= 9; i++) {
     const now = performance.now();
     const {vertices, triangles} = icomesh(i);
     const ms = (performance.now() - now).toLocaleString();

@@ -1,10 +1,9 @@
-
 export default function icomesh(order = 4) {
     if (order > 10) throw new Error(`Max order is 10, but given ${order}.`);
 
     // set up an icosahedron (12 vertices / 20 triangles)
     const f = (1 + Math.sqrt(5)) / 2;
-    const T = Math.pow(4, order);
+    const T = 1 << (order << 1); // Math.pow(4, order);
 
     const vertices = new Float32Array((10 * T + 2) * 3);
     vertices.set([
@@ -21,14 +20,14 @@ export default function icomesh(order = 4) {
     ]);
 
     let v = 12;
-    const midCache = order && new Map(); // midpoint vertices cache to avoid duplicating shared vertices
+    const midCache = order ? new Map() : null; // midpoint vertices cache to avoid duplicating shared vertices
 
     function addMidPoint(a, b) {
-        const key = Math.floor((a + b) * (a + b + 1) / 2) + (a < b ? a : b); // Cantor's pairing function
+        const key = ((a + b) * (a + b + 1) / 2) + Math.min(a, b) | 0; // Cantor's pairing function
         let i = midCache.get(key);
         if (i !== undefined) return i;
         midCache.set(key, v);
-        for (let k = 0; k < 3; k++) vertices[3 * v + k] = (vertices[3 * a + k] + vertices[3 * b + k]) / 2;
+        for (let k = 0; k < 3; k++) vertices[3 * v + k] = (vertices[3 * a + k] + vertices[3 * b + k]) * 0.5;
         i = v++;
         return i;
     }
@@ -57,7 +56,7 @@ export default function icomesh(order = 4) {
     }
 
     // normalize vertices
-    for (let i = 0; i < vertices.length; i += 3) {
+    for (let i = 0, len = vertices.length; i < len; i += 3) {
         const m = 1 / Math.hypot(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
         vertices[i + 0] *= m;
         vertices[i + 1] *= m;
