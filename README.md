@@ -7,6 +7,10 @@ Fast JavaScript icosphere mesh generation library for WebGL visualizations. [Int
 Icosphere is a type of [geodesic polyhedron](https://en.wikipedia.org/wiki/Geodesic_polyhedron) that provides a good quality triangular mesh approximation of a sphere with relatively evenly distributed vertices.
 This code is based on [an article by Andreas Kahler](http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html), with a few optimizations.
 
+[![Build Status](https://travis-ci.com/mourner/icomesh.svg?branch=master)](https://travis-ci.com/mourner/icomesh)
+[![minzipped size](https://badgen.net/bundlephobia/minzip/icomesh)](https://unpkg.com/icomesh)
+[![Simply Awesome](https://img.shields.io/badge/simply-awesome-brightgreen.svg)](https://github.com/mourner/projects)
+
 ## Example
 
 ```js
