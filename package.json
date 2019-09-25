@@ -6,13 +6,15 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "test": "eslint *.js",
+    "pretest": "eslint *.js",
+    "test": "node -r esm test.js",
     "bench": "node -r esm bench.js"
   },
   "devDependencies": {
     "eslint": "^6.4.0",
     "eslint-config-mourner": "^3.0.0",
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "tape": "^4.11.0"
   },
   "eslintConfig": {
     "extends": "mourner"
