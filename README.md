@@ -27,3 +27,11 @@ Returns an object with:
 - `triangles`: A `Uint16Array` or `Uint32Array` array of triangle indices.
 
 You can reuse vertex data for normals because they are equal for a unit sphere.
+
+## Install
+
+Install with `npm install icomesh` or `yarn add icomesh` (module environments only),
+or use a browser build from CDN:
+
+- [ES module build on unpkg](https://unpkg.com/icomesh)
+- [UMD build on bundle.run](https://bundle.run/icomesh)
