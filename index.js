@@ -2,21 +2,31 @@ export default function icomesh(order = 4) {
     if (order > 10) throw new Error(`Max order is 10, but given ${order}.`);
 
     // set up an icosahedron (12 vertices / 20 triangles)
-    const f = (1 + Math.sqrt(5)) / 2;
+    const r5 = Math.sqrt(5);
+    const h = 1/r5;	// +/-height of ring vertices from plane ≃0.4472
+    const w = 2/r5;	// factor for x,y of ring vertices
+    const c36 = w * 0.25 * (r5 + 1); // cosine of 36° ≃ 0.8090
+    const s36 = w * Math.sqrt( (5/8) - (r5 / 8) ); // sine of 36° ≃ 0.5877
+    const c72 = w * 0.25 * (r5 - 1); // cosine of 72° ≃ 0.3090
+    const s72 = w * Math.sqrt( (5/8) + (r5 / 8) ); // sine of 72° ≃ 0.9510
+
     const T = Math.pow(4, order);
 
     const vertices = new Float32Array((10 * T + 2) * 3);
     vertices.set(Float32Array.of(
-        -1, f, 0, 1, f, 0, -1, -f, 0, 1, -f, 0,
-        0, -1, f, 0, 1, f, 0, -1, -f, 0, 1, -f,
-        f, 0, -1, f, 0, 1, -f, 0, -1, -f, 0, 1
+        0,0,1, // North pole
+        0,1,h,        s72,c72,h,  s36,-c36,h,  -s36,-c36,h,  -s72,c72,h, // Northern ring
+        -s36,c36,-h,  s36,c36,-h, s72,-c72,-h, 0,-1,-h,    -s72,-c72,-h, // Southern ring
+        0,0,-1 // South pole
     ));
 
     let triangles = Uint16Array.of(
-        0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11,
-        11, 10, 2, 5, 11, 4, 1, 5, 9, 7, 1, 8, 10, 7, 6,
-        3, 9, 4, 3, 4, 2, 3, 2, 6, 3, 6, 8, 3, 8, 9,
-        9, 8, 1, 4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7
+        0,2,1,    0,3,2,    0,4,3,    0,5,4,  0,1,5,  // Adjacent to north
+
+        1,2,7,    2,3,8,    3,4,9,   4,5,10,  5,1,6,  // Central ring, northern half
+        7,2,8,    8,3,9,    9,4,10,  10,5,6,  6,1,7,  // Central ring, southern half
+
+        6,7,11,  7,8,11,    8,9,11,  9,10,11, 10,6,11 // Adjacent to south
     );
 
     let v = 12;
