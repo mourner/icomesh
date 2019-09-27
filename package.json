@@ -1,7 +1,7 @@
 {
   "name": "icomesh",
   "description": "Fast icosphere mesh generation",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "type": "module",
   "main": "index.js",
   "module": "index.js",
