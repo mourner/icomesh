@@ -2,23 +2,41 @@
 import test from 'tape';
 import icomesh from './index.js';
 
+const x = 0.525731086730957;
+const y = 0.8506507873535156;
+
 test('icomesh 0', (t) => {
     const {vertices, triangles} = icomesh(0);
-    const x = 0.525731086730957;
-    const y = 0.8506507873535156;
+
+    t.ok(triangles instanceof Uint16Array);
+    t.ok(vertices instanceof Float32Array);
 
     t.same(vertices, [
         -x, y, 0, x, y, 0, -x, -y, 0, x, -y, 0, 0, -x, y, 0, x, y,
         0, -x, -y, 0, x, -y, y, 0, -x, y, 0, x, -y, 0, -x, -y, 0, x
     ]);
-    t.ok(triangles instanceof Uint16Array);
-
     t.same(triangles, [
         0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11, 11, 10, 2,
         5, 11, 4, 1, 5, 9, 7, 1, 8, 10, 7, 6, 3, 9, 4, 3, 4, 2,
         3, 2, 6, 3, 6, 8, 3, 8, 9, 9, 8, 1, 4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7
     ]);
-    t.ok(vertices instanceof Float32Array);
+
+    t.end();
+});
+
+test('icomesh 0 uvmap', (t) => {
+    const {vertices, triangles} = icomesh(0, true);
+
+    t.same(Array.from(vertices), [
+        -x, y, 0, x, y, 0, -x, -y, 0, x, -y, 0, 0, -x, y, 0, x, y,
+        0, -x, -y, 0, x, -y, y, 0, -x, y, 0, x, -y, 0, -x, -y, 0, x,
+        -x, y, 0, -y, 0, x, -x, -y, 0
+    ]);
+    t.same(Array.from(triangles), [
+        0, 11, 5, 0, 5, 1, 12, 1, 7, 12, 7, 10, 12, 10, 13, 13, 10, 14, 5,
+        11, 4, 1, 5, 9, 7, 1, 8, 10, 7, 6, 3, 9, 4, 3, 4, 2, 3, 14, 6, 3,
+        6, 8, 3, 8, 9, 9, 8, 1, 4, 9, 5, 2, 4, 11, 6, 14, 10, 8, 6, 7
+    ]);
 
     t.end();
 });
